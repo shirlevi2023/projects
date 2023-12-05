@@ -1,0 +1,74 @@
+shirlevi2
+316127679
+
+i choose for the most of strategies at the decorator design pattern- because it can be
+modular at running time when we want to change strategies at randomic manner, its
+functional at the way that each strategy Accepts a particular area of responsibility, and
+does not deviate from it. In addition the main advantage is that the basic strategy can be used
+ and from it the other strategies can be derived independently.
+
+AlotStudtTime algorithm:
+this is a greedy algorithm because at each stage we do the best opportunity for us- to add
+ a task to time slot if its possible, and moving on else.
+ for each task at idx i we have 2 options - to add it to the time slot at idx j or not -
+ if not, our alg move on to the next slot for the same task, We will notice that it is not possible
+ to skip options because the arrays are sorted from small to large, so if any task can not enter
+any time slot, then the next task will not be able to enter either, so indeed in this case
+ we will move to the next time slot.
+
+ running time - O(nlogn).
+ because we do just 1 while loop and actions at a fixed time. so O(1)+ O(n) = O(n).
+ and 2 actions of sorting that is O(nlogn)
+ so O(nlogn)+ O(n) = O(nlogn)
+
+minLeap algorithm:
+this is a greedy algorithm, because at each step it takes the optimal choise for it:
+At each stage we choose the farthest point that can be reached from a certain point
+(maxReach). when we arrive to "if (idxVal == k)" condition, we can be sure that we pass
+over all the options and get the farthest.
+We add 1 to the count of jumps so we can be sure that we really count
+the minimum number because in each step we really calculate the farthest point
+that can be reached, and to reach it requires at least one step, so we actually
+progress as far as possible according to the jump limit, so we necessarily count minimum number Of jumps.
+
+ running time - O(n).
+ because we does just one for loop, that means pass on the whole array. in addition we
+ does actions at a fixed time, so O(1) + O(n) = O(n).
+
+bucketWalk algorithm:
+
+ We will notice that calculating the number of ways to fill the well whose contents is n
+ liters with buckets of 2 liters and 1 liters
+  (with the importance of order) is equivalent to calculating the n member at pibonacchi
+  sequence- first, because the base cases are the same- because for i = 0 and i = 1 the
+  num of ways to fill the well is just one way. and second, we notice that the calculate
+  the ways to fill the n liters of the well depends on the num of ways to fill n-1 liters
+  from it and the ways to fill n-2 from it.
+  so because of that we can define recurrence formula for that problem that equal to
+  pibonacchi sequence:
+  f(n) = f(n-1) + F(n-2). (at Discrete Mathematics Course we proved that)
+  because the recursive formula can be implements by dynamic programming - (because each
+  value depend on the previous members at sequence- we can save that at an array and solve
+ the problem at O(n) time complexity.
+ running time - O(n) - explaining above.
+
+ numTrees algorithm:
+we notice that our problem is a Combinatorial problem.
+at the base cases we calculate how many unique trees there is-
+if n == 0 is trivial that the solution is 0.
+if n == 1  is trivial that the solution is 1.
+if n == 2 the solution is 2.
+and from the correctness of the mathematical formula that the num of combinations of
+unique trees in a binary tree that the root is R is
+num of combinations that root is R.right *  num of combinations that root is R.left.
+in the higher cases we use that rule and notice that the result is catalan numbers, that
+we learn at Discrete Mathematics Course.
+so beacuse of that we use with dynamic to solve the problem.
+running time -  O(n). we build a table with n cells, and pass on it and fill, in addition
+we do actions at a fixed time, so O(n) + O(1) = O(n).
+
+
+
+
+
+
