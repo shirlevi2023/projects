@@ -1,0 +1,208 @@
+// This file is part of nand2tetris, as taught in The Hebrew University, and
+// was written by Aviv Yaish. It is an extension to the specifications given
+// [here](https://www.nand2tetris.org) (Shimon Schocken and Noam Nisan, 2017),
+// as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
+// Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
+
+/**
+ * A library of commonly used mathematical functions.
+ * Note: Jack compilers implement multiplication and division using OS method calls.
+ */
+class Math {
+        /** Initializes the library. */
+        static Array powerOfTwoArray;
+
+        //todo-func-done!
+        function void init() {
+        let powerOfTwoArray =Array.new(16);
+
+		let powerOfTwoArray[0] = 1;
+		let powerOfTwoArray[1] = 2;
+		let powerOfTwoArray[2] = 4;
+		let powerOfTwoArray[3] = 8;
+		let powerOfTwoArray[4] = 16;
+		let powerOfTwoArray[5] = 32;
+		let powerOfTwoArray[6] = 64;
+		let powerOfTwoArray[7] = 128;
+		let powerOfTwoArray[8] = 256;
+		let powerOfTwoArray[9] = 512;
+		let powerOfTwoArray[10] = 1024;
+		let powerOfTwoArray[11] = 2048;
+		let powerOfTwoArray[12] = 4096;
+		let powerOfTwoArray[13] = 8192;
+		let powerOfTwoArray[14] = 16384;
+		let powerOfTwoArray[15] = 16384 +16384;
+
+		return;
+        }
+
+        function int abs(int x) {
+            if(x>0)
+                {
+                    return x;
+                }
+
+            return -x;
+        }
+
+         function boolean bit(int x,int i)
+            {
+                return (x & powerOfTwoArray[i]);
+            }
+
+         //todo-getter for powerOfTwoArray
+         function int getBit(int i)
+            {
+                return powerOfTwoArray[i];
+            }
+
+
+
+        /** 
+         * Returns the product of x and y. 
+         * When a Jack compiler detects the multiplication operator '*' in the 
+         * program's code, it handles it by invoking this method. In other words,
+         * the Jack expressions x*y and multiply(x,y) return the same value.
+         */
+        function int multiply(int x, int y) {
+            // Pseudocode:
+            // 1. let sum = 0
+            // 2. let shiftedx = x
+            // 3. for i = 0 ... n-1 do
+            // 4.   if ((i-th bit of y) == 1)
+            // 5.      let sum = sum + shiftedx
+            // 6.   let shiftedx = 2*shiftedx
+            // 7. return sum
+            var int i;
+            var int sumMultiply;
+            var int dX;
+            let dX=x;
+            let sumMultiply=0;
+            let i=0;
+            while(~(i>16)|(i=16))
+            {
+                if(~(Math.bit(y,i)<0 |(Math.bit(y,i)=0))
+                | ~(Math.bit(y,i)>0|(Math.bit(y,i)=0)))
+                {
+                    let sumMultiply=sumMultiply+dX;
+                }
+                let dX=^dX;
+
+                let i=i+1;
+            }
+            return sumMultiply;
+        }
+
+        /** 
+         * Returns the integer part of x/y.
+         * When a Jack compiler detects the multiplication operator '/' in the 
+         * program's code, it handles it by invoking this method. In other words,
+         * the Jack expressions x/y and divide(x,y) return the same value.
+         */
+         //todo-func3-done!
+        function int divide(int x, int y) {
+            // This should be implemented without using multiplication.
+            // Hint: updating the value of 2*q*y in the "if" statement requires
+            // at most a single addition operator at every recursion step.
+            // Pseudocode:
+            // 1. if (y > x) return 0
+            // 2. let q = divide(x, 2*y)
+            // 3. if ((x - 2*q*y) < y)
+            // 4.   return 2*q
+            // 5. else
+            // 6.   return 2*q + 1
+
+        var int divideTemp;
+        var int numSign;
+        var int tempY;
+        var int tempX;
+        var int temp;
+		let numSign=1;
+
+		if (y<0)
+            {
+                return 0;
+            }
+
+		if (~(0>x |x=0)|~(0>y |y=0))
+		{
+			if(x<0 | y<0)
+			{
+				let numSign=-1;
+			}
+		}
+
+
+		let x = Math.abs(x);
+		let y = Math.abs(y);
+
+		if (y>x)
+            {
+                return 0;
+            }
+
+        let tempY=^y;
+		let divideTemp = Math.divide(x, tempY);
+		let temp=Math.multiply(^divideTemp,y);
+        let tempX=x-temp;
+		if (tempX <y)
+            {
+               let temp=^divideTemp;
+                return Math.multiply(temp,numSign);
+            }
+		else
+            {
+                let temp=1+^divideTemp;
+                return Math.multiply(temp,numSign);
+            }
+		}
+
+
+         //todo-func4-done!
+        /** Returns the integer part of the square root of x. */
+        function int sqrt(int x) {
+
+            // 1. let y = 0
+            // 2. for j = (n/2 - 1) ... 0 do
+            // 3.   if ((y + 2**j)**2 <= x) then let y = y + 2**j
+            // 4. return y
+
+        var int i,l;
+        var int tempNum;
+        var int tempClac;
+		let i=0;
+		let l=7;
+		while (l+1>0)
+		{
+			let tempNum=i+powerOfTwoArray[l];
+			let tempClac=(tempNum*tempNum);
+			if (~(tempClac<0))
+            	{
+				    if(~(tempClac>x))
+				    {
+                        let i=i+powerOfTwoArray[l];
+                    }
+			    }
+			let l=l-1;
+		}
+		return i;
+        }
+
+         //todo-func5-done!
+        /** Returns the greater number. */
+        function int max(int a, int b) {
+            if (a>b){
+                return a;
+            }
+            return b;
+        }
+
+         //todo-func6-done!
+        /** Returns the smaller number. */
+        function int min(int a, int b) {
+              if (a>b){
+                return b;
+            }
+            return a;
+        }
+}

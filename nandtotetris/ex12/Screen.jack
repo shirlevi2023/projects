@@ -1,0 +1,299 @@
+// This file is part of nand2tetris, as taught in The Hebrew University, and
+// was written by Aviv Yaish. It is an extension to the specifications given
+// [here](https://www.nand2tetris.org) (Shimon Schocken and Noam Nisan, 2017),
+// as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
+// Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
+
+/**
+ * A library of functions for displaying graphics on the screen.
+ * The Hack physical screen consists of 256 rows (indexed 0..255, top to bottom)
+ * of 512 pixels each (indexed 0..511, left to right). The top left pixel on 
+ * the screen is indexed (0,0).
+ */
+class Screen {
+       static Array screen;
+       static Array powerOfTwoArray;
+       static boolean tempColor;
+
+
+        /** Initializes the Screen. */
+        function void init() {
+            var int i;
+            let screen = 16384;
+            let tempColor = true;
+
+            let i = 0;
+            let powerOfTwoArray = Array.new(16);
+            let powerOfTwoArray[0] = 1;
+            let powerOfTwoArray[1] = 2;
+            let powerOfTwoArray[2] = 4;
+            let powerOfTwoArray[3] = 8;
+            let powerOfTwoArray[4] = 16;
+            let powerOfTwoArray[5] = 32;
+            let powerOfTwoArray[6] = 64;
+            let powerOfTwoArray[7] = 128;
+            let powerOfTwoArray[8] = 256;
+            let powerOfTwoArray[9] = 512;
+            let powerOfTwoArray[10] = 1024;
+            let powerOfTwoArray[11] = 2048;
+            let powerOfTwoArray[12] = 4096;
+            let powerOfTwoArray[13] = 8192;
+            let powerOfTwoArray[14] = 16384;
+            let powerOfTwoArray[15] = 16384 +16384;
+            
+            
+            return;
+
+
+        }
+
+        /** Erases the entire screen. */
+        function void clearScreen() {
+            var boolean bool;
+            var int j;
+            let bool=false;
+            let j=24575;
+            while(j>16384)
+            {
+                do Memory.poke(j,bool);
+                let j=j-1;
+            }
+            return;
+
+        }
+
+        /** Sets the current color, to be used for all subsequent drawXXX commands.
+         *    Black is represented by true, white by false. */
+        function void setColor(boolean b) {
+            let tempColor=b;
+		    return;
+
+        }
+
+        /** Draws the (x,y) pixel, using the current color. */
+        function void drawPixel(int x, int y) {
+            // For this function, you will need to calculate the value x%16.
+            // It should be calculated quickly without using multiplication or
+            // division, using exactly one basic math/logical operation.
+            // In addition, calculating 16384 + y * 32 + x/16 should not use
+            // division or multiplication.
+            // Pseudocode:
+            // 1. Compute the RAM address where the (x,y) pixel is
+            //    represented: 16384 + (32*y) + (x/16).
+            // 2. Use Memory.peek to get the 16-bit value of this address
+            // 3. Use some bitwise operation to set (only) the bit that corresponds
+            //    to the pixel to the current color.
+            // 4. Use Memory.poke to write the modified 16-bit value to the RAM
+            // address.
+            var int tempVar;
+            var int tempBit;
+            var int i;
+            var int j;
+            var int tempIndex;
+
+
+
+            let i=32*y;
+            let j=x/16;
+            let tempIndex=x&15;
+            let tempBit=powerOfTwoArray[tempIndex];
+            if (~tempColor)
+                {
+                    let tempIndex=i+j;
+                    let tempVar=screen[tempIndex]&(~tempBit);
+                }
+            else
+                {
+                    let tempIndex=i+j;
+                    let tempVar = screen[tempIndex]|tempBit;
+
+                }
+            let tempIndex=i+j;
+            let screen[tempIndex] = tempVar;
+            return;
+
+
+        }
+
+        /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
+        function void drawLine(int x1, int y1, int x2, int y2) {
+            // The case where x1 != x2 and y1 != y2 should be implemented without
+            // multiplication or division.
+            // Pseudocode:
+            // 1. let x = x1, y = y1, a = 0, b = 0, diff = 0
+            // 2. Compute dx and dy
+            // 3. while ((a <= dx) and (b <= dy))
+            // 4.   do drawPixel(x+a, y+b)
+            // 5.   if (diff < 0) { let a=a+1, diff=diff+dy }
+            // 6.   else          { let b=b+1, diff=diff-dx }
+            //
+            // The case where y1 == y2 can be implemented efficiently by
+            // trying to draw as many pixels as possible in a single assignment,
+            // similarly to Fill in project 4.
+     		var int i;
+     		var int distanceX, distanceY;
+     		var int tempNum,tempSwapNum;
+
+            let distanceX=x2-x1;
+            let distanceY=y2-y1;
+            if(x1=x2)
+            {
+                if (y1<y2){
+                    let tempSwapNum=y2;
+                    let y2=y1;
+                    let y1=tempSwapNum;
+                }
+                let i=0;
+                while (y2+i<y1){
+                    do Screen.drawPixel(x1,y2+i);
+                    let i=i+1;
+                }
+                return;
+            }
+            if (y1=y2)
+            {
+                if (x1<x2){
+                    let tempSwapNum=x2;
+                    let x2= x1;
+                    let x1=tempSwapNum;
+                }
+                let i=0;
+                while (x2+i<x1){
+                    do Screen.drawPixel(x2+i,y1);
+                    let i=i+1;
+                }
+                return;
+            }
+            if ((~(distanceX>0)|(distanceX=0)))
+            {
+                if(~((distanceY>0)|(distanceY=0)))
+                {
+
+                    let tempSwapNum=y1;
+                    let y1=y2;
+                    let y2=tempSwapNum;
+                    let distanceY=-distanceY;
+
+                    let tempSwapNum=x1;
+                    let x1=x2;
+                    let x2=tempSwapNum;
+                    let distanceX=-distanceX;
+                }
+		    }
+        let i=0;
+		if ((distanceX > 0)& (distanceY > 0)){
+			do Screen.drawPlus(i,distanceX,i,distanceY,i,x1,y1);
+			return;
+		}
+
+		else {
+            do Screen.drawMinus(i,distanceX,i,distanceY,i,x1,y1,x2,y2);
+			return;
+
+		}
+    }
+
+function void drawPlus(int i, int distanceX, int j, int distanceY,int k, int x1,int y1) {
+			while ((i<distanceX)&(j<distanceY))
+			{
+                do Screen.drawPixel(x1+i, y1+j);
+                if (~(k>0))
+                {
+                    let i=i+1;
+                    let k=k+distanceY;
+                }
+                else
+                {
+                    let j=j+1;
+                    let k=k-distanceX;
+                }
+        }
+        return;
+    }
+
+      function void drawMinus(int i, int distanceX, int j, int distanceY,int k, int x1,int y1 ,int x2,int y2) {
+         var int tempSwap;
+           if ((distanceX > 0)& (distanceY < 0)){
+                    let tempSwap=y1;
+                    let y1=y2;
+                    let y2=tempSwap;
+                    let tempSwap=x1;
+                    let x1= x2;
+                    let x2=tempSwap;
+                    let distanceY=-distanceY;
+                }
+                else{
+                    let distanceX=-distanceX;
+                }
+            while (~(i<distanceX | i=distanceX )&~(j<distanceY | j=distanceY)){
+
+                    do Screen.drawPixel(x1-i, y1+j);
+                    if (~(k < 0))
+                    {
+                        let j=j+1;
+                        let k=k-distanceX;
+                    }
+                    else
+                    {
+                        let i=i+1;
+                        let k=k+distanceY;
+                    }
+            }
+                return;
+        }
+
+
+
+        /** Draws a filled rectangle whose top left corner is (x1, y1)
+         * and bottom right corner is (x2,y2), using the current color. */
+        function void drawRectangle(int x1, int y1, int x2, int y2) {
+        var int a,b,i,tempX;
+        let i = 0;
+        while (~(((i+x1)>(x2+1)) | (i+x1)=(x2+1))) {
+            let b = 0;
+            if (y1>y2)
+            {
+                let i=y1;
+                let y1=y2;
+                let y2=i;
+            }
+            while (~(y1+b>y2)|(y1+b=y2))
+            {
+                do Screen.drawPixel(x1+i,y1+b);
+                let b=b+1;
+            }
+                let i=i+1;
+        }
+        return;
+    }
+
+        /** Draws a filled circle of radius r<=181 around (x,y), using the current color. */
+        function void drawCircle(int x, int y, int r) {
+            // This can be implemented efficiently by drawing multiple lines at
+            // each iteration. You can use multiplication and sqrt.
+            // Pseudocode:
+            // 1. for (dy = -r ... r)
+            // 2.   let halfWidth = sqrt(r*r - dy*dy)
+            // 3.   do drawLine(x-halfWidth, y+dy, x+halfWidth, y+dy)
+            var int i,tempSqar,tempDy,tempDx,tempDx1, tempR,tempDy1;
+            if (~(r<181))
+            {
+                return;
+            }
+            let i=-r;
+            while (i<r)
+            {
+                let tempR=r*r ;
+                let tempDy=i*i ;
+                let tempSqar=Math.sqrt(tempR-tempDy) ;
+                let tempDx=x-tempSqar;
+                let tempDx1=x+tempSqar;
+                let tempDy1=y+i;
+			    do Screen.drawLine(tempDx,tempDy1,tempDx1,tempDy1);
+                let i=i+1;
+            }
+		return;
+
+
+        }
+}
